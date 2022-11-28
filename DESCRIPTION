@@ -1,0 +1,16 @@
+Package: pairwise
+Type: Package
+Title: Estimating values using pairwise comparisons
+Version: 0.1.0
+Author: Jonas Moss
+Maintainer: Jonas Moss <jonas.moss.statistics@gmail.com>
+Description: Methods for estimating values using combinations of binary or 
+   cardinal pairwise comparisons. Includes plotting methods and functions for
+   calculating optimal selection of questions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.2.1
