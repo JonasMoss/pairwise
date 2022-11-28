@@ -3,3 +3,5 @@
 workspace
 ^LICENSE\.md$
 ^codecov\.yml$
+^README\.qmd$
+^.github$

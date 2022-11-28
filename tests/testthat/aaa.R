@@ -14,7 +14,7 @@ sigma <- c(
   rep(2, (sum(conn) - sum(diag(conn))) / 2)
 )
 
-d <- simulate(clusters, vertices, conn)
+d <- pairwise:::simulation(clusters, vertices, conn)
 beta <- seq(ncol(d)) - 1
 tau <- 1
 cont <- rnorm(nrow(d), d %*% beta, tau * sigma)

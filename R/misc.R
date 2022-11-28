@@ -42,9 +42,12 @@ varf <- \(x) x * (1 - x)
 
 
 #' Construct w.
+#' @param d_new New data.
+#' @param beta0 Vector of regression coefficients.
+#' @param sigma0 The standard deviation.
 w_new <- function(d_new, beta0, sigma0) {
-  mu0 <- c(pnorm(d_new %*% beta0 / sigma0))
-  dmu <- c(dnorm(d_new %*% beta0 / sigma0) / sigma0)
+  mu0 <- c(stats::pnorm(d_new %*% beta0 / sigma0))
+  dmu <- c(stats::dnorm(d_new %*% beta0 / sigma0) / sigma0)
   vf <- mu0 * (1 - mu0)
   inf_to_zero(dmu^2 / vf)
 }
@@ -79,4 +82,38 @@ influence <- function(obj, source, target, sigma = 1, binary = FALSE, normalized
   r <- r_matrix(MASS::ginv(j))
 
   if (normalized) 2 * obj$kirchhoff / sum(r) else 0.5 * sum(r)
+}
+
+#' Check if the induced graph is  connected.
+#'
+#' @param data A data frame of pairwise comparison data.
+#' @param mode Passed to `igraph::is.connected`. Defaults to strong.
+#' @return `TRUE` if the induced graph is strongly connected, `FALSE` if not.
+is_induced_connected <- function(data, mode = "strong") {
+  g <- induced(data)
+  igraph::is.connected(g, mode)
+}
+
+#' Transform data frame to induced graph.
+#'
+#' @param data data frame of pairwise comparison data.
+#' @return The induced graph.
+induced <- function(data) {
+  bins <- is.na(data$cont)
+  d_ind <- 4:ncol(data)
+  graph_bin <- directed(data[bins, d_ind] * (2 * data$bin[bins] - 1))
+  graph_cont_1 <- directed(data[!bins, d_ind])
+  graph_cont_2 <- directed(-data[!bins, d_ind])
+  igraph::union(graph_bin, graph_cont_1, graph_cont_2)
+}
+
+#' Construct directed graph from d.
+#' @param d Data source.
+#' @return A directed graph.
+directed <- function(d) {
+  sources <- which(d == 1, arr.ind = TRUE)
+  sources <- sources[order(sources[, 1]), 2]
+  targets <- which(d == -1, arr.ind = TRUE)
+  targets <- targets[order(targets[, 1]), 2]
+  igraph::graph_from_edgelist(cbind(sources, targets))
 }

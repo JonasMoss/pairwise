@@ -10,7 +10,7 @@ inf_to_zero(x)
 \item{x}{Vector of inputs.}
 }
 \value{
-Vector with `0`s replacing `Inf`s.
+Vector with \code{0}s replacing \code{Inf}s.
 }
 \description{
 Replace Infinite with 0.

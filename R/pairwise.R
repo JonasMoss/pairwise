@@ -1,11 +1,11 @@
 #' Fit a pairwise comparison model
 #'
 #' @param data Data frame to estimate.
-#' @param epsilon Congvergence tolerance. Iterations converge when the relative
-#'    difference is less than epsilon.
 #' @param maxit Maximum number of iterations. Defaults to `25`, which coincides
 #'    with that of `glm`.
-#' @param beta1 Optional starting value.
+#' @param epsilon Congvergence tolerance. Iterations converge when the relative
+#'    difference is less than epsilon.
+#' @param start Optional starting value.
 #' @export
 pairwise <- function(data, maxit = 25, epsilon = 1e-8, start = NULL) {
   stopifnot(is_induced_connected(data))
@@ -33,7 +33,7 @@ pairwise <- function(data, maxit = 25, epsilon = 1e-8, start = NULL) {
 
   beta1 <- if (is.null(start)) rep(0, ncol(data) - 3) else start
   sigma1 <- 1
-  mu1 <- c(pnorm(d_bin %*% beta1 / sigma1))
+  mu1 <- c(stats::pnorm(d_bin %*% beta1 / sigma1))
   dev1 <- dev(y_cont, y_bin, d_cont %*% beta1, mu1, sigma1)
 
   for (i in seq(maxit)) {
@@ -42,8 +42,8 @@ pairwise <- function(data, maxit = 25, epsilon = 1e-8, start = NULL) {
     dev0 <- dev1
     mu0 <- mu1
 
-    mu0 <- c(pnorm(d_bin %*% beta0 / sigma0))
-    dmu <- c(dnorm(d_bin %*% beta0 / sigma0) / sigma0)
+    mu0 <- c(stats::pnorm(d_bin %*% beta0 / sigma0))
+    dmu <- c(stats::dnorm(d_bin %*% beta0 / sigma0) / sigma0)
     vf <- mu0 * (1 - mu0)
     d <- inf_to_zero(dmu / vf)
     w <- inf_to_zero(dmu^2 / vf)
@@ -53,7 +53,7 @@ pairwise <- function(data, maxit = 25, epsilon = 1e-8, start = NULL) {
 
     beta1 <- c(beta0 + j_inv %*% (u_bin + u_cont))
     sigma1 <- sqrt(sum((d_cont %*% beta1 - y_cont)^2) / div)
-    mu1 <- c(pnorm(d_bin %*% beta1 / sigma1))
+    mu1 <- c(stats::pnorm(d_bin %*% beta1 / sigma1))
     dev1 <- dev(y_cont, y_bin, d_cont %*% beta1, mu1, sigma1)
 
     if (abs(dev1 - dev0) / abs(dev0) < epsilon) break

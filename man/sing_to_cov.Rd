@@ -11,7 +11,7 @@ sing_to_cov(mat, i, keep_i = FALSE)
 
 \item{i}{Index of the baseline variable.}
 
-\item{keep_i}{If `TRUE`, returns a singular covariance matrix with `0` in
+\item{keep_i}{If \code{TRUE}, returns a singular covariance matrix with \code{0} in
 the appropriate position.}
 }
 \value{

@@ -4,17 +4,28 @@
 \alias{plot.pairwise}
 \title{Plot connection strength graph of a fitted pairwise model.}
 \usage{
-\method{plot}{pairwise}(obj, reference = NULL, induced = TRUE, col = "black", ...)
+\method{plot}{pairwise}(
+  x,
+  reference = NULL,
+  induced = TRUE,
+  col = "black",
+  labels = seq(obj$p),
+  ...
+)
 }
 \arguments{
-\item{obj}{Fitted pairwise model.}
+\item{x}{Fitted pairwise model.}
 
-\item{induced}{If `TRUE`, plots induced connections strengths in addition
+\item{reference}{Reference node.}
+
+\item{induced}{If \code{TRUE}, plots induced connections strengths in addition
 to the main connection strengths.}
 
-\item{col}{Passed to `col`.}
+\item{col}{Passed to \code{col}.}
 
-\item{...}{Passed to `plot`.}
+\item{labels}{Labels of nodes. Only used if \code{reference} is \code{NULL}.}
+
+\item{...}{Ignored.}
 }
 \description{
 Plot connection strength graph of a fitted pairwise model.

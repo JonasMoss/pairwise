@@ -5,7 +5,7 @@
 #' @param conn Symmetric matrix with number of vertices between each cluster.
 #' @return Simulated data.
 
-simulate <- function(clusters, vertices, conn) {
+simulation <- function(clusters, vertices, conn) {
   d <- matrix(
     0,
     nrow = sum(conn[lower.tri(conn, diag = TRUE)]),
@@ -43,5 +43,5 @@ simulate <- function(clusters, vertices, conn) {
     from <- from + size
   }
 
-  d * (2 * rbinom(nrow(d), 1, 0.5) - 1)
+  d * (2 * stats::rbinom(nrow(d), 1, 0.5) - 1)
 }
