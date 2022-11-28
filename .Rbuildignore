@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 workspace
 ^LICENSE\.md$
+^codecov\.yml$
