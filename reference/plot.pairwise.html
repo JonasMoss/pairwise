@@ -45,26 +45,41 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for pairwise</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">obj</span>, reference <span class="op">=</span> <span class="cn">NULL</span>, induced <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"black"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  reference <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  induced <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="va">p</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>obj</dt>
+    <dl><dt>x</dt>
 <dd><p>Fitted pairwise model.</p></dd>
 
 
+<dt>reference</dt>
+<dd><p>Reference node.</p></dd>
+
+
 <dt>induced</dt>
-<dd><p>If `TRUE`, plots induced connections strengths in addition
+<dd><p>If <code>TRUE</code>, plots induced connections strengths in addition
 to the main connection strengths.</p></dd>
 
 
 <dt>col</dt>
-<dd><p>Passed to `col`.</p></dd>
+<dd><p>Passed to <code>col</code>.</p></dd>
+
+
+<dt>labels</dt>
+<dd><p>Labels of nodes. Only used if <code>reference</code> is <code>NULL</code>.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Passed to `plot`.</p></dd>
+<dd><p>Ignored.</p></dd>
 
 </dl></div>
 

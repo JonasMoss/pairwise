@@ -19,9 +19,6 @@
     <loc>/reference/directed.html</loc>
   </url>
   <url>
-    <loc>/reference/hello.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
@@ -29,6 +26,9 @@
   </url>
   <url>
     <loc>/reference/inf_to_zero.html</loc>
+  </url>
+  <url>
+    <loc>/reference/influence.html</loc>
   </url>
   <url>
     <loc>/reference/is_induced_connected.html</loc>
@@ -43,12 +43,15 @@
     <loc>/reference/r_matrix.html</loc>
   </url>
   <url>
-    <loc>/reference/simulate.html</loc>
+    <loc>/reference/simulation.html</loc>
   </url>
   <url>
     <loc>/reference/sing_to_cov.html</loc>
   </url>
   <url>
     <loc>/reference/varf.html</loc>
+  </url>
+  <url>
+    <loc>/reference/w_new.html</loc>
   </url>
 </urlset>
