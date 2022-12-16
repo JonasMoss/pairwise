@@ -1,0 +1,209 @@
+---
+title: "Pairwise comparisons with binary and continuous data"
+subtitle: "Induced resistance distance and influence using the Kirchhoff index"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+  revealjs:
+    self-contained: true
+    theme: pulse
+    highlight-style: nord
+    slide-number: c/t
+    width: 1440
+    height: 810
+    margin: 0.20
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    incremental: true   
+    auto-stretch: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+---
+
+```{r prepare}
+#| echo: False
+set.seed(313)
+
+## First simulate some nodes.
+clusters <- 3
+vertices <- 5
+cross <- 2
+conn <- matrix(c(
+  25, 2, 2,
+  2, 25, 5,
+  2, 5, 25
+), nrow = 3, byrow = TRUE)
+
+conn <- conn
+
+sigma <- c(
+  rep(1, sum(diag(conn))),
+  rep(2, (sum(conn) - sum(diag(conn))) / 2)
+)
+
+d <- pairwise:::simulation(clusters, vertices, conn)
+beta <- runif(ncol(d), 0, 10)
+tau <- 1
+cont <- rnorm(nrow(d), d %*% beta, tau * sigma)
+bin <- cont >= 0
+cont[rbinom(nrow(d), 1, 0.3) == 1] <- NA
+
+data <- data.frame(
+  cont = cont,
+  bin = bin,
+  sigma = sigma,
+  d
+)
+```
+
+## Introduction
+
+-   We're dealing with pairwise comparison data.
+-   Some of the data is continuous, some binary (i.e. "Do you prefer $X$ to $Y$? Yes or no.")
+-   Can deal with density answers too, but we only use the log-mean and the log-standard deviation.
+
+::: fragment
+When dealing with continuous data, the model is $\log y_{ij}^k = \beta_i - \beta_j + \epsilon$, where $\beta_i$ is the log-value of item $i$ and $y_{ij}^k$ is the the $k$th evaluation of "How much better is item $i$ than item $k$?"
+:::
+
+## Example data
+
+```{r}
+nrow(data)
+head(data)
+```
+
+-   There are 15 questions labeled `X1` to `X15`.
+-   The sigma variable is a user-supplied measure of certainty.
+    -   Most natural when the distribution is log-normal.
+-   Sigma is only used for continuous data.
+    -   Not clear how to use it for binary data.
+-   The data is encodes a weighted multigraph.
+
+## Example data: Graph
+
+```{r}
+plot(pairwise:::induced(data))
+```
+
+## Example data: Explanation
+
+-   There is a directed edge from `Xi` to `Xj` if the there is a **positive** binary comparison comparing `Xi` to `Xj`.
+    -   I.e. someone has answer "Yes!" to the question "Do you prefer `Xi` to `Xj`" or "No!" to "Do you prefer `Xj` to `Xi`"?
+-   An arrow is double-headed iff either there is a continuous response comparing both endpoints.
+-   The model is identified iff the induced graph is strongly connected.
+
+## The resistance distance
+
+-   Let $G$ be connected, directed graph.
+-   The *resistance distance* between two nodes $e_1,e_2\in G$ is a certain measure of distance between nodes.
+-   (It is a function of the Moore--Penrose inverse of the graph Laplacian of $G$.)
+-   The term comes from electrical network theory, and measures the "effective resistance" for electric current traveling between the two nodes.
+-   It is also called the *commutate distance*. It is the expected time used by a random walk making the round-trip $e_1\to e_2\to e_1$.
+
+## Resistance distance and pairwise comparisons
+
+::: fragment
+### Proposition
+
+Suppose all questions are continuous and all $\sigma$s are equal. Then the variance for $\beta_i$ when $\beta_j=0$ is the reference equals $$\operatorname{Var}(\beta_j^i)=\sigma^{2}R_{ij}.$$
+:::
+
+-   We can generalize the resistance distance to weighted multigraphs.
+
+## Resistance distance and pairwise comparisons (ii)
+
+::: fragment
+### Proposition
+
+There is a graph with $G^\star$ with resistance distance matrix $R$ so that $$\operatorname{Var}(\beta_j^i)=R_{ij},$$ where $j$ is the reference index.
+:::
+
+-   Using SVD we can create a norm $||\cdot||$ on $\mathbb{R}^K$ that respects the distance matrix $R$. (Where $K$ is the number of questions and each question is mapped to a unit vector in $\mathbb{R}^K$).
+
+-   We can use dimensionality reduction techniques such as t-SNE to visualize the resulting induced graph $G^\star$!
+
+## 
+
+```{r}
+#| echo: False
+obj <- pairwise:::pairwise(data) #
+pairwise:::plot.pairwise(
+  obj,
+  col = c(rep("black", 5, ), rep("red", 5), rep("blue", 5)),
+  induced = FALSE
+)
+```
+
+## Choice of reference class
+
+-   The choice of reference question has big implications on the precision of other estimates. We can roughly deduce how much by looking at the induced graph.
+-   But we can also visualize the effect directly.
+
+## When the reference is $\beta_1$
+
+```{r}
+i <- 1
+plot(obj, reference = i, col = c(rep("black", 5, ), rep("red", 5), rep("blue", 5)))
+lines(seq(length(beta)), beta - beta[i], lty = 2, lwd = 2)
+```
+
+## When the reference is $\beta_6$
+
+```{r}
+i <- 6
+plot(obj, reference = i, col = c(rep("black", 5, ), rep("red", 5), rep("blue", 5)))
+lines(seq(length(beta)), beta - beta[i], lty = 2, lwd = 2)
+```
+
+## When the reference is $\beta_{11}$
+
+```{r}
+i <- 11
+plot(obj, reference = i, col = c(rep("black", 5, ), rep("red", 5), rep("blue", 5)))
+lines(seq(length(beta)), beta - beta[i], lty = 2, lwd = 2)
+```
+
+## Some comments
+
+-   The data looks like this due to the clustering I've used in the simulation data; three clusters with the first two more tightly coupled to each other than the final cluster.
+-   We don't have to use a single reference question though -- we could use e.g. the mean, or some sort of optimally weighted mean, etc. That might work better, but would be hard to interpret since it would change in time (as more items are added and the weights change.)
+
+## Influence comparisons
+
+-   How valuable would it be to add a pairwise comparison to the data?
+-   We can use the change in the *Kirchhhoff index*, used in organic chemistry, to measure the influence of adding a comparison.
+-   This equals $0.5 \sum_{i,j}{R_{ij}}$, so it's proportial to the sum of all resistance distances.
+-   Using the Kirchhoff ratio $1 \leq K_{old}/K_{new}$, we can order pairwise comparisons in an intuitive way. (E.g., $K_{old}/K_{new} = 2$ means the Kirchhoff index is halved).
+
+## Kirchhoff ratio with continuous questions
+
+```{r}
+cont <- outer(1:15, 1:15, Vectorize(\(i, j) pairwise:::influence(obj, j, i, binary = FALSE)))
+lattice::levelplot(cont)
+max(cont)
+```
+
+## Kirchhoff ratio with binary questions
+
+```{r}
+bin <- outer(1:15, 1:15, Vectorize(\(i, j) pairwise:::influence(obj, j, i, binary = TRUE)))
+lattice::levelplot(bin)
+max(bin)
+```
+
+## Main takeaways
+
+1.  When there're clusters in the data, you need to get the clusters closer together.
+2.  Asking binary questins is only beneficial if (a) you're dealing with comparisons with large resistance distance and (b) the betas are pretty close to each other, so both positive and negative responses are possible.
+
+## Ratio of Kirchhoff ratios (cont vs. binary)
+
+```{r}
+lattice::levelplot(cont / bin)
+```
