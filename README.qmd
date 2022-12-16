@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 An `R` package for estimating values using a mix of binary and cardinal comparisons. 
 
 ```{r setup, include=FALSE}
-#library("pairwise")
+# library("pairwise")
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(out.width='750px', dpi=200)
+knitr::opts_chunk$set(out.width = "750px", dpi = 200)
 ```
 
 ## Installation
