@@ -10,19 +10,19 @@
 #' @export
 
 plot.pairwise <- function(x, reference = NULL, induced = TRUE, col = "black", labels = seq(obj$p), ...) {
-  obj = x
+  obj <- x
   if (!is.null(reference)) {
     y <- stats::coef(obj, reference = reference)
     x <- seq(length(y))
     cis <- stats::confint(obj, reference = reference)
     Hmisc::errbar(
       x = x, y = y, yplus = cis[, 2], yminus = cis[, 1],
-      ylab = "Value", xlab = "Question index", type = "b"
+      ylab = "Value", xlab = "Question index", type = "b", col = col
     )
     graphics::grid()
     Hmisc::errbar(
       x = x, y = y, yplus = cis[, 2], yminus = cis[, 1],
-      add = TRUE
+      add = TRUE, col = col
     )
   } else {
     data <- obj$data
@@ -34,7 +34,8 @@ plot.pairwise <- function(x, reference = NULL, induced = TRUE, col = "black", la
     singulars[length(singulars)] <- 0
     vecs <- eig$vectors
     res <- umap::umap(t(diag(singulars) %*% t(vecs)))$layout
-    plot(res, type = "n", xlab = "x", ylab = "y",
+    plot(res,
+      type = "n", xlab = "x", ylab = "y",
       main = "Model-implied graph"
     )
     r <- r_matrix(obj$j_inv)
@@ -65,7 +66,7 @@ confint.pairwise <- function(object, parm, level = 0.95, reference = 1, ...) {
   beta <- stats::coef(object, reference)
   ses <- diag(sing_to_cov(object$j_inv, reference, keep_i = TRUE))
   modifier <- c(ses * stats::qnorm(1 / 2 + level / 2))
-  cbind(lower = beta - modifier,upper = beta + modifier)[parm, ]
+  cbind(lower = beta - modifier, upper = beta + modifier)[parm, ]
 }
 
 #' @export

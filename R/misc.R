@@ -1,3 +1,32 @@
+#' Makes a suitable data drame out of pairwise agreement data.
+#'
+#' @param data Pairwise agreement data.
+#' @param keep_names If `TRUE`, keeps the names of the questions. This can
+#'   make the data frame unwieldly. Defaults to `FALSE`.
+#' @return An appropriate data frame.
+make_frame <- function(data, keep_names = FALSE) {
+  levels <- levels(as.factor(c(data$source, data$target)))
+  source <- as.numeric(factor(data$source, levels = levels))
+  target <- as.numeric(factor(data$target, levels = levels))
+
+  k <- length(levels)
+  n <- nrow(data)
+
+  d <- matrix(data = 0, nrow = n, ncol = k)
+  for (i in seq(n)) {
+    d[i, source[i]] <- -1
+    d[i, target[i]] <- 1
+  }
+
+  selection <- seq(k)
+  y <- log(as.numeric(data$distance))
+
+  data_frame <- data.frame(cont = y, bin = TRUE, sigma = 1, d[, selection])
+
+  data_frame
+}
+
+
 #' Calculate asymptotic covariance matrix from singular covariane
 #'
 #' @param mat Singular covariance matrix.
