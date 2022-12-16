@@ -5,3 +5,4 @@ workspace
 ^codecov\.yml$
 ^README\.qmd$
 ^.github$
+raw_data
