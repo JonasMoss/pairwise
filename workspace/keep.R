@@ -16,8 +16,8 @@ sigma <- c(
   rep(1, sum(diag(conn))),
   rep(2, (sum(conn) - sum(diag(conn)))/2))
 
-d <- simulate(clusters, vertices, conn)
-beta <- seq(ncol(d)) - 1
+d <- simulation(clusters, vertices, conn)
+beta <- runif(ncol(d), 0, 10)
 tau <- 1
 cont <- rnorm(nrow(d), d %*% beta, tau * sigma)
 bin <- cont >= 0
@@ -29,20 +29,37 @@ data <- data.frame(
   sigma = sigma,
   d)
 
-graph <- induced(data)
-plot(graph)
+
+
+
+
+
+
+data <- make_frame(dat.research)
+data[1, 1] = NA
+data$cont = data$cont - 0.11
+obj <- pairwise(data)
+
+
+
+
+
+
+
+
+plot(induced(data))
+
+
 obj = pairwise(data)
 influence(obj, 1, 2, binary = FALSE)
-
-
 plot.pairwise(
   obj,
   col = c(rep("black", 5,), rep("red", 5), rep("blue", 5)),
   induced = FALSE)
 
 i = 1
-plot(obj, reference = i)
-abline(a = 1 - i, b = 1)
+plot(obj, reference = i, col = c(rep("black", 5,), rep("red", 5), rep("blue", 5)))
+lines(seq(length(beta)), beta - beta[i], lty = 2, lwd = 2)
 
 
 source <- 5
@@ -96,8 +113,20 @@ round(sum(r_matrix(attr(obj, "j_inv"))) / res_cont - 1, 2)
 round(sum(r_matrix(attr(obj, "j_inv"))) / res_bin - 1, 2)
 
 
-influence(obj, 1, 2, FALSE))
+influence(obj, 1, 2, binary = FALSE)
 
-j = 6
-i = setdiff(1:15, 6)
-plot(i, sapply(i, \(i) influence(obj, j, i, TRUE)/influence(obj, j, i, FALSE)))
+j = 1
+i = setdiff(1:15, 1)
+plot(i, sapply(i, \(i) influence(obj, j, i, binary = TRUE)
+               /influence(obj, j, i, binary = FALSE)))
+
+cont <- outer(1:15, 1:15, Vectorize(\(i,j) influence(obj, j, i, binary = TRUE)))
+lattice::levelplot(cont)
+
+binary <- outer(1:15, 1:15, Vectorize(\(i,j) influence(obj, j, i, binary = FALSE)))
+lattice::levelplot(binary)
+
+res <- outer(1:15, 1:15, Vectorize(\(i,j) influence(obj, j, i, binary = FALSE)))
+lattice::levelplot(binary / cont)
+
+which.max(cont)
